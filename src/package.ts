@@ -129,6 +129,10 @@ export function isValidPackageName(name: string): boolean {
     return false;
   }
 
+  if (name === 'node_modules' || name === 'favicon.ico') {
+    return false;
+  }
+
   // Must match valid package pattern
   return SCOPED_PACKAGE_PATTERN.test(name);
 }

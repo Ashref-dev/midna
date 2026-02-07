@@ -22,13 +22,11 @@ export function calculateConfidence(evidence: EvidenceEntry[]): number {
   if (evidence.length === 0) {
     return 0;
   }
-  
-  // Get the highest confidence evidence
+
   const maxScore = Math.max(...evidence.map(e => EVIDENCE_SCORES[e.type] || 0.5));
-  
-  // Boost confidence with multiple pieces of evidence
-  const evidenceBoost = Math.min(evidence.length * 0.05, 0.15);
-  
+
+  const evidenceBoost = Math.min((evidence.length - 1) * 0.05, 0.15);
+
   return Math.min(maxScore + evidenceBoost, 1.0);
 }
 
