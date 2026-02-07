@@ -1,0 +1,45 @@
+{
+  "name": "midna",
+  "version": "1.0.0",
+  "description": "A cautious, Next.js-aware dependency auditor that tells you what you can safely remove, with evidence.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "midna": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "dependency",
+    "audit",
+    "nextjs",
+    "cli",
+    "unused",
+    "dependencies",
+    "javascript",
+    "typescript"
+  ],
+  "author": "Ashref (Ashref-dev)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@swc/core": "^1.5.0",
+    "commander": "^12.0.0",
+    "fast-glob": "^3.3.0",
+    "picocolors": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ]
+}
