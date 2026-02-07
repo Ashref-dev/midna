@@ -33,11 +33,12 @@ function extractImportsFromAST(node: any, imports: ParsedImport[]): void {
   
   // Handle import declarations
   if (node.type === 'ImportDeclaration' && node.source?.value) {
+    const isType = node.typeOnly === true || node.importKind === 'type';
     imports.push({
       packageName: normalizePackageName(node.source.value),
-      type: node.importKind === 'type' ? 'type_import' : 'static_import',
+      type: isType ? 'type_import' : 'static_import',
       line: node.span?.start || 0,
-      isTypeOnly: node.importKind === 'type'
+      isTypeOnly: isType
     });
   }
   
@@ -53,9 +54,24 @@ function extractImportsFromAST(node: any, imports: ParsedImport[]): void {
   }
   
   // Handle dynamic imports
-  if (node.type === 'ImportExpression' && node.source?.value) {
+  if (node.type === 'ImportExpression') {
+    const source = node.source?.value ?? node.source?.expression?.value;
+    if (typeof source === 'string') {
+      imports.push({
+        packageName: normalizePackageName(source),
+        type: 'dynamic_import',
+        line: node.span?.start || 0
+      });
+    }
+  }
+
+  if (
+    node.type === 'CallExpression' &&
+    node.callee?.type === 'Import' &&
+    typeof node.arguments?.[0]?.expression?.value === 'string'
+  ) {
     imports.push({
-      packageName: normalizePackageName(node.source.value),
+      packageName: normalizePackageName(node.arguments[0].expression.value),
       type: 'dynamic_import',
       line: node.span?.start || 0
     });
@@ -92,14 +108,14 @@ export function detectUseClient(content: string): boolean {
   const lines = content.split('\n');
   for (const line of lines.slice(0, 20)) {
     const trimmed = line.trim();
-    // Handle both with and without semicolon
+    if (!trimmed || trimmed.startsWith('//')) {
+      continue;
+    }
     const withoutSemi = trimmed.replace(/;$/, '');
     if (withoutSemi === '"use client"' || withoutSemi === "'use client'") {
       return true;
     }
-    if (trimmed && !trimmed.startsWith('//')) {
-      break;
-    }
+    break;
   }
   return false;
 }
@@ -110,20 +126,24 @@ export function detectUseClient(content: string): boolean {
 export function extractCssImports(content: string): ParsedImport[] {
   const imports: ParsedImport[] = [];
   const lines = content.split('\n');
-  
+
   const cssImportPattern = /import\s+['"](.+?\.css)['"];?/;
-  
+
   lines.forEach((line, index) => {
     const match = line.match(cssImportPattern);
     if (match) {
+      const path = match[1];
+      if (path.startsWith('.') || path.startsWith('/')) {
+        return;
+      }
       imports.push({
-        packageName: normalizePackageName(match[1]),
+        packageName: normalizePackageName(path),
         type: 'css_import',
         line: index + 1
       });
     }
   });
-  
+
   return imports;
 }
 

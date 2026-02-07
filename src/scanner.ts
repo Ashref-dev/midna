@@ -199,8 +199,8 @@ function escapeRegex(str: string): string {
 export function hasUseClient(content: string): boolean {
   const firstLines = content.split('\n').slice(0, 10);
   return firstLines.some(line => 
-    line.trim() === '"use client"' || 
-    line.trim() === "'use client'"
+    line.trim().replace(/;$/, '') === '"use client"' || 
+    line.trim().replace(/;$/, '') === "'use client'"
   );
 }
 
