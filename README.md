@@ -1,6 +1,8 @@
-# Midna
+# midna.ashref.tn
 
 A cautious, Next.js-aware dependency auditor that tells you what you can safely remove, with evidence.
+
+Made by Ashref (ashref.tn)
 
 ## Overview
 
@@ -186,4 +188,4 @@ MIT
 
 ## Author
 
-Ashref (https://github.com/Ashref-dev)
+Ashref (ashref.tn)
